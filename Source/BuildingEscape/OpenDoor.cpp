@@ -14,14 +14,12 @@ UOpenDoor::UOpenDoor()
 	// ...
 }
 
-
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	InitialYaw = GetOwner()->GetActorRotation().Yaw;
 }
-
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
