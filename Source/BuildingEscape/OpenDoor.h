@@ -29,11 +29,17 @@ private:
     UPROPERTY(EditAnywhere)
  	float TargetYaw  = 90.f;
     UPROPERTY(EditAnywhere)
- 	float OpeningSpeed  = 0.5f;
+ 	float OpeningSpeed  = 0.8f;
+    UPROPERTY(EditAnywhere)
+ 	float ClosingSpeed  = 2.f;
+    UPROPERTY(EditAnywhere)
+ 	float DoorCloseDelay = 0.2f;
+    float LastOpened = 0.0f;
     UPROPERTY(EditAnywhere)
     class ATriggerVolume* PressPlate;
     UPROPERTY(EditAnywhere)
     class AActor* ActorThatOpens;
 
     void OpenDoor(float DeltaTime);
+    void CloseDoor(float DeltaTime);
 };
