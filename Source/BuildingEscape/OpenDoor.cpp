@@ -24,13 +24,19 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	float CurrentYaw = FMath::Lerp(GetOwner()->GetActorRotation().Yaw,
-		InitialYaw+TargetYaw, 1.0f * DeltaTime);
-	/// In principle I'd need to make this more general by taking the
-	/// right rotation
-    if(PressPlate!=nullptr){
-        // PressPlate->OnActorBeginOverlap();
-        GetOwner()->SetActorRotation(FRotator(0.0f,CurrentYaw, 0.0f));
+    if(PressPlate!=nullptr and ActorThatOpens != nullptr){
+        if(PressPlate->IsOverlappingActor(ActorThatOpens))
+            OpenDoor(DeltaTime);
     }
+}
+
+void UOpenDoor::OpenDoor(float DeltaTime)
+{
+    FRotator CurrentRotation {GetOwner()->GetActorRotation()};
+    float CurrentYaw = FMath::Lerp(CurrentRotation.Yaw,
+		InitialYaw+TargetYaw, OpeningSpeed * DeltaTime);
+    CurrentRotation.Yaw = CurrentYaw;
+    GetOwner()->SetActorRotation(CurrentRotation);
+
 }
 

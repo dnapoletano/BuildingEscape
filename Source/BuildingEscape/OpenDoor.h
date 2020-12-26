@@ -29,5 +29,11 @@ private:
     UPROPERTY(EditAnywhere)
  	float TargetYaw  = 90.f;
     UPROPERTY(EditAnywhere)
+ 	float OpeningSpeed  = 0.5f;
+    UPROPERTY(EditAnywhere)
     class ATriggerVolume* PressPlate;
+    UPROPERTY(EditAnywhere)
+    class AActor* ActorThatOpens;
+
+    void OpenDoor(float DeltaTime);
 };
