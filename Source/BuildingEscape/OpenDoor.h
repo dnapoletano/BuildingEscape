@@ -28,4 +28,6 @@ private:
 	float InitialYaw = 0.0f;
     UPROPERTY(EditAnywhere)
  	float TargetYaw  = 90.f;
+    UPROPERTY(EditAnywhere)
+    class ATriggerVolume* PressPlate;
 };
