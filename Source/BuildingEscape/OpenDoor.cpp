@@ -49,7 +49,7 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 {
     FRotator CurrentRotation {GetOwner()->GetActorRotation()};
     float CurrentYaw = FMath::Lerp(CurrentRotation.Yaw,
-		InitialYaw+TargetYaw, OpeningSpeed * DeltaTime);
+		InitialYaw+OpenAngle, OpeningSpeed * DeltaTime);
     CurrentRotation.Yaw = CurrentYaw;
     GetOwner()->SetActorRotation(CurrentRotation);
 }

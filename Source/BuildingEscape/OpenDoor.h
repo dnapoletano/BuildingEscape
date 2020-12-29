@@ -27,11 +27,11 @@ public:
 private:
 	float InitialYaw = 0.0f;
     UPROPERTY(EditAnywhere)
- 	float TargetYaw  = 90.f;
+ 	float OpenAngle  = 90.0f;
     UPROPERTY(EditAnywhere)
  	float OpeningSpeed  = 0.8f;
     UPROPERTY(EditAnywhere)
- 	float ClosingSpeed  = 2.f;
+ 	float ClosingSpeed  = 2.0f;
     UPROPERTY(EditAnywhere)
  	float DoorCloseDelay = 0.2f;
     float LastOpened = 0.0f;
