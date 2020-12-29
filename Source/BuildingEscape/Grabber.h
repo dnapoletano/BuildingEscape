@@ -27,6 +27,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ViewReach = 100.f;
 
+	FVector ViewEndPoint = FVector(0.f,0.f,0.f);
+
   class UInputComponent*         InputComponent = nullptr;
 	class UPhysicsHandleComponent* PhysicsHandle  = nullptr;
 
@@ -36,7 +38,7 @@ private:
 	void PickUp();
 	void Release();
 
-	void GetViewPointAndLocation(FVector& PlayerCurrentLocation, FVector& ViewEndPoint);
-	bool InReach(const FVector& PlayerCurrentLocation, const FVector& ViewEndPoint,
+	void GetViewPointAndLocation(FVector& PlayerCurrentLocation);
+	bool InReach(const FVector& PlayerCurrentLocation,
 		             const FCollisionQueryParams& TraceParams, FHitResult& Hit) const;
 };

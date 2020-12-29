@@ -60,30 +60,38 @@ void UGrabber::SetUpInputComponent()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if(PhysicsHandle->GrabbedComponent != nullptr){
+		FVector PlayerCurrentLocation {0.f,0.f,0.f};
+		GetViewPointAndLocation(PlayerCurrentLocation);
+		PhysicsHandle->SetTargetLocation(ViewEndPoint);
+	}
 }
 
 void UGrabber::PickUp()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Pressed PickUp button"));
-	/// TODO: try and reach any physics object collision channel set
-	/// if we hit something then attach the physics handle
 	FVector PlayerCurrentLocation {0.f,0.f,0.f};
-	FVector ViewEndPoint {0.f,0.f,0.f};
-	GetViewPointAndLocation(PlayerCurrentLocation, ViewEndPoint);
+	GetViewPointAndLocation(PlayerCurrentLocation);
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams{FName{TEXT("")},false,GetOwner()};
-	if(InReach(PlayerCurrentLocation, ViewEndPoint, TraceParams, Hit)){
-		UE_LOG(LogTemp, Warning, TEXT("We have hit %s "), *(Hit.GetActor()->GetName()));
+	if(InReach(PlayerCurrentLocation, TraceParams, OUT Hit)){
+		UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
+		PhysicsHandle->GrabComponentAtLocation(
+			ComponentToGrab,
+			NAME_None,
+			ViewEndPoint
+		);
 	}
 }
 
 void UGrabber::Release()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Released PickUp button"));
-	/// TODO: if attached then release the physics handle
+	if(PhysicsHandle->GrabbedComponent != nullptr){
+		PhysicsHandle->ReleaseComponent();
+	}
 }
 
-void UGrabber::GetViewPointAndLocation(FVector& PlayerCurrentLocation, FVector& ViewEndPoint)
+void UGrabber::GetViewPointAndLocation(FVector& PlayerCurrentLocation)
 {
 	FRotator ViewRotation{0.f,0.f,0.f};
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
@@ -93,7 +101,7 @@ void UGrabber::GetViewPointAndLocation(FVector& PlayerCurrentLocation, FVector& 
 	ViewEndPoint = PlayerCurrentLocation + ViewRotation.Vector()*ViewReach;
 }
 
-bool UGrabber::InReach(const FVector& PlayerCurrentLocation, const FVector& ViewEndPoint,
+bool UGrabber::InReach(const FVector& PlayerCurrentLocation,
 		                     const FCollisionQueryParams& TraceParams, FHitResult& Hit) const
 {
 	GetWorld()->LineTraceSingleByObjectType(
@@ -103,8 +111,5 @@ bool UGrabber::InReach(const FVector& PlayerCurrentLocation, const FVector& View
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParams
 	);
-	AActor* ActorHit {Hit.GetActor()};
-	if(ActorHit != nullptr){
-		return true;
-	} else return false;
+	return (Hit.GetActor() != nullptr);
 }
