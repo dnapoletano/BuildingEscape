@@ -20,11 +20,12 @@ UGrabber::UGrabber()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 // Called when the game starts
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
+	/// At this point in time, no physics handle or input component
+	/// is set, so we do just that here.
 	FindPhysicsHandle();
 	SetUpInputComponent();
 }
@@ -47,14 +48,10 @@ void UGrabber::SetUpInputComponent()
 			TEXT("A Input Component has not been correctly found for Actor %s"),
 			*(GetOwner()->GetName()));
 	}
-	UE_LOG(LogTemp, Log,
-		TEXT("Input Component found for Actor %s"),
-		*(GetOwner()->GetName()));
 
 	InputComponent->BindAction("PickUp", EInputEvent::IE_Pressed, this, &UGrabber::PickUp);
 	InputComponent->BindAction("PickUp", EInputEvent::IE_Released, this, &UGrabber::Release);
 }
-
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -62,24 +59,21 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if(PhysicsHandle->GrabbedComponent != nullptr){
-		FVector PlayerCurrentLocation {0.f,0.f,0.f};
-		GetViewPointAndLocation(PlayerCurrentLocation);
-		PhysicsHandle->SetTargetLocation(ViewEndPoint);
+		/// Need to re-evaluate the current location
+		PhysicsHandle->SetTargetLocation(GetViewEndPoint());
 	}
 }
 
 void UGrabber::PickUp()
 {
-	FVector PlayerCurrentLocation {0.f,0.f,0.f};
-	GetViewPointAndLocation(PlayerCurrentLocation);
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams{FName{TEXT("")},false,GetOwner()};
-	if(InReach(PlayerCurrentLocation, TraceParams, OUT Hit)){
+	if(InReach(TraceParams, OUT Hit)){
 		UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
 		PhysicsHandle->GrabComponentAtLocation(
 			ComponentToGrab,
 			NAME_None,
-			ViewEndPoint
+			GetViewEndPoint()
 		);
 	}
 }
@@ -91,23 +85,23 @@ void UGrabber::Release()
 	}
 }
 
-void UGrabber::GetViewPointAndLocation(FVector& PlayerCurrentLocation)
+FVector UGrabber::GetViewEndPoint() const
 {
+	FVector PlayerCurrentLocation{0.f,0.f,0.f};
 	FRotator ViewRotation{0.f,0.f,0.f};
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
 		OUT PlayerCurrentLocation,
 		OUT ViewRotation
 	);
-	ViewEndPoint = PlayerCurrentLocation + ViewRotation.Vector()*ViewReach;
+	return PlayerCurrentLocation + ViewRotation.Vector()*ViewReach;
 }
 
-bool UGrabber::InReach(const FVector& PlayerCurrentLocation,
-		                     const FCollisionQueryParams& TraceParams, FHitResult& Hit) const
+bool UGrabber::InReach(const FCollisionQueryParams& TraceParams, FHitResult& Hit)
 {
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
-		PlayerCurrentLocation,
-		ViewEndPoint,
+		GetOwner()->GetActorLocation(),
+		GetViewEndPoint(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParams
 	);
