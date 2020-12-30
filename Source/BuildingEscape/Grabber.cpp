@@ -57,15 +57,15 @@ void UGrabber::SetUpInputComponent()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	if(PhysicsHandle == nullptr) return;
 	if(PhysicsHandle->GrabbedComponent != nullptr){
-		/// Need to re-evaluate the current location
 		PhysicsHandle->SetTargetLocation(GetViewEndPoint());
 	}
 }
 
 void UGrabber::PickUp()
 {
+	if(PhysicsHandle == nullptr) return;
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams{FName{TEXT("")},false,GetOwner()};
 	if(InReach(TraceParams, OUT Hit)){
@@ -80,6 +80,7 @@ void UGrabber::PickUp()
 
 void UGrabber::Release()
 {
+	if(PhysicsHandle == nullptr) return;
 	if(PhysicsHandle->GrabbedComponent != nullptr){
 		PhysicsHandle->ReleaseComponent();
 	}

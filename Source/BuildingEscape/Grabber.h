@@ -27,7 +27,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ViewReach = 100.f;
 
+	UPROPERTY()
   class UInputComponent*         InputComponent = nullptr;
+	UPROPERTY()
 	class UPhysicsHandleComponent* PhysicsHandle  = nullptr;
 
 	void FindPhysicsHandle();
