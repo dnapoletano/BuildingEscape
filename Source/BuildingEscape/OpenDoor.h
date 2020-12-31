@@ -28,11 +28,11 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-  float MassThreshold = 50.0f;
+  float MassThreshold = 70.0f;
 
-	float InitialYaw = 0.0f;
+	float InitialY = 0.0f;
   UPROPERTY(EditAnywhere)
- 	float OpenAngle  = 90.0f;
+ 	float OpenY  = 90.0f;
   UPROPERTY(EditAnywhere)
  	float OpeningSpeed  = 0.8f;
   UPROPERTY(EditAnywhere)

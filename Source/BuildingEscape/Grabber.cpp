@@ -59,7 +59,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if(PhysicsHandle == nullptr) return;
 	if(PhysicsHandle->GrabbedComponent != nullptr){
-		PhysicsHandle->SetTargetLocation(GetViewEndPoint());
+		PhysicsHandle->SetTargetLocationAndRotation(GetViewEndPoint(),ActorInitialRotation);
 	}
 }
 
@@ -70,10 +70,12 @@ void UGrabber::PickUp()
 	FCollisionQueryParams TraceParams{FName{TEXT("")},false,GetOwner()};
 	if(InReach(TraceParams, OUT Hit)){
 		UPrimitiveComponent* ComponentToGrab = Hit.GetComponent();
-		PhysicsHandle->GrabComponentAtLocation(
+		ActorInitialRotation = Hit.GetActor()->GetActorRotation();
+		PhysicsHandle->GrabComponentAtLocationWithRotation(
 			ComponentToGrab,
 			NAME_None,
-			GetViewEndPoint()
+			GetViewEndPoint(),
+			ActorInitialRotation
 		);
 	}
 }

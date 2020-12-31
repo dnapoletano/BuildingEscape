@@ -27,6 +27,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ViewReach = 100.f;
 
+	FRotator ActorInitialRotation;
+
 	UPROPERTY()
   class UInputComponent*         InputComponent = nullptr;
 	UPROPERTY()

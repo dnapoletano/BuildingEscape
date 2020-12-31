@@ -27,7 +27,7 @@ void UOpenDoor::BeginPlay()
         UE_LOG(LogTemp, Error,
             TEXT("Actor %s has no collision volume set"),*(GetOwner()->GetName()));
     }
-	InitialYaw = GetOwner()->GetActorRotation().Yaw;
+	InitialY = GetOwner()->GetActorLocation().Y;
 }
 
 // Called every frame
@@ -57,11 +57,11 @@ void UOpenDoor::SetAudioComponent()
 
 void UOpenDoor::OpenDoor(float DeltaTime)
 {
-    FRotator CurrentRotation {GetOwner()->GetActorRotation()};
-    float CurrentYaw = FMath::Lerp(CurrentRotation.Yaw,
-		InitialYaw+OpenAngle, OpeningSpeed * DeltaTime);
-    CurrentRotation.Yaw = CurrentYaw;
-    GetOwner()->SetActorRotation(CurrentRotation);
+    FVector CurrentLocation {GetOwner()->GetActorLocation()};
+    float CurrentY = FMath::Lerp(CurrentLocation.Y,
+		InitialY+OpenY, OpeningSpeed * DeltaTime);
+    CurrentLocation.Y = CurrentY;
+    GetOwner()->SetActorLocation(CurrentLocation);
     if(AudioComponent==nullptr) return;
     if((not AudioComponent->IsPlaying()) and (SoundPlayed % 2 == 0)){
         AudioComponent->Play();
@@ -71,11 +71,12 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 
 void UOpenDoor::CloseDoor(float DeltaTime)
 {
-    FRotator CurrentRotation {GetOwner()->GetActorRotation()};
-    float CurrentYaw = FMath::Lerp(CurrentRotation.Yaw,
-		InitialYaw , ClosingSpeed * DeltaTime);
-    CurrentRotation.Yaw = CurrentYaw;
-    GetOwner()->SetActorRotation(CurrentRotation);
+    FVector CurrentLocation {GetOwner()->GetActorLocation()};
+    float CurrentY = FMath::Lerp(CurrentLocation.Y,
+		InitialY , ClosingSpeed * DeltaTime);
+    CurrentLocation.Y = CurrentY;
+    // GetOwner()->SetActorRotation(CurrentRotation);
+    GetOwner()->SetActorLocation(CurrentLocation);
     if(AudioComponent==nullptr) return;
     /// Play the door sound only an odd number of times
     if((not AudioComponent->IsPlaying()) and (not (SoundPlayed % 2 == 0))){
